@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: Simple Petstore API
+  version: 1.0.0
+paths:
+  /pets:
+    get:
+      summary: ペットのリストを取得
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+    post:
+      summary: 新しいペットを追加
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+      responses:
+        '201':
+          description: ペットを追加しました
+  /pets/{petId}:
+    patch:
+      summary: 指定されたIDのペットの部分的な情報を更新
+      operationId: updatePetPartial
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: 更新するペットのID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                tag:
+                  type: string
+      responses:
+        '200':
+          description: ペットの情報が正常に更新されました
+        '404':
+          description: ペットが見つかりませんでした
+    delete:
+      summary: 指定されたIDのペットを削除
+      operationId: deletePet
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: 削除するペットのID
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: ペットが正常に削除されました
+        '404':
+          description: ペットが見つかりませんでした
+components:
+  schemas:
+    Pet:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        tag:
+          type: string
