@@ -13,10 +13,24 @@ GENERATED_PACKAGE=api
 # エントリーポイント
 SERVER_ENTRY_POINT=cmd/server/main.go
 CLIENT_ENTRY_POINT=cmd/client/main.go
+
 # コード生成
+.PHONY: generate-api
+generate-api:
+	oapi-codegen -package $(GENERATED_PACKAGE) -o $(GENERATED_DIR)/$(GENERATED_PACKAGE).gen.go $(SPEC_FILE)
+
+.PHONY: generate-mock
+generate-mock:
+	go generate ./...
+
 .PHONY: generate
 generate:
-	oapi-codegen -package $(GENERATED_PACKAGE) -o $(GENERATED_DIR)/$(GENERATED_PACKAGE).gen.go $(SPEC_FILE)
+	make generate-api
+	make generate-mock
+# 
+.PHONY: lint
+lint:
+	staticcheck ./...	
 
 # ビルド
 .PHONY: build

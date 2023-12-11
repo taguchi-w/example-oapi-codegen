@@ -7,9 +7,6 @@ import (
 	"github.com/taguchi-w/example-oapi-codegen/pkg/api"
 )
 
-// Pet は生成されたAPIインターフェースを実装する
-var _ service.PetManager = (*Pet)(nil)
-
 type Pet struct {
 }
 

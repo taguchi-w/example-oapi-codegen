@@ -1,9 +1,15 @@
+//go:generate mockgen -source=adapter.go -destination=mocks/mock_adapter.go -package=mock
 package adapter
 
-import "github.com/taguchi-w/example-oapi-codegen/internal/service"
+type Adapters struct {
+	Pet *Pet
+}
 
-func New() service.Adapters {
-	return service.Adapters{
-		PetManager: NewPet(),
+func New(db DBAdapter) Adapters {
+	return Adapters{
+		Pet: NewPet(),
 	}
+}
+
+type DBAdapter interface {
 }

@@ -70,5 +70,4 @@ func main() {
 	}
 	fmt.Println("Delete Pet:", resp.Status)
 	fmt.Println(string(body))
-
 }

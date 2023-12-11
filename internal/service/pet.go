@@ -6,21 +6,12 @@ import (
 	"github.com/taguchi-w/example-oapi-codegen/pkg/api"
 )
 
-// dependency injection
-type PetManager interface {
-	Create(ctx context.Context, req CreatePetRequest) (*api.Pet, error)
-	Update(ctx context.Context, req UpdatePetRequest) (*api.Pet, error)
-	List(ctx context.Context, req GetPetsRequest) ([]*api.Pet, error)
-	Get(ctx context.Context, req GetPetRequest) (*api.Pet, error)
-	Delete(ctx context.Context, req DeletePetRequest) error
-}
-
 type Pet struct {
-	petManager PetManager
+	petAdapter PetAdapter
 }
 
-func NewPet(petManager PetManager) *Pet {
-	return &Pet{petManager}
+func NewPet(petAdapter PetAdapter) *Pet {
+	return &Pet{petAdapter}
 }
 
 type CreatePetRequest struct {
@@ -70,7 +61,7 @@ func (s *Pet) Create(ctx context.Context, req CreatePetRequest) (*api.Pet, error
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
-	pet, err := s.petManager.Create(ctx, req)
+	pet, err := s.petAdapter.Create(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +71,7 @@ func (s *Pet) List(ctx context.Context, req GetPetsRequest) ([]*api.Pet, error) 
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
-	pets, err := s.petManager.List(ctx, req)
+	pets, err := s.petAdapter.List(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +81,7 @@ func (s *Pet) Get(ctx context.Context, req GetPetRequest) (*api.Pet, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
-	pet, err := s.petManager.Get(ctx, req)
+	pet, err := s.petAdapter.Get(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +91,7 @@ func (s *Pet) Update(ctx context.Context, req UpdatePetRequest) (*api.Pet, error
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
-	pet, err := s.petManager.Update(ctx, req)
+	pet, err := s.petAdapter.Update(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +101,7 @@ func (s *Pet) Delete(ctx context.Context, req DeletePetRequest) error {
 	if err := req.Validate(); err != nil {
 		return err
 	}
-	err := s.petManager.Delete(ctx, req)
+	err := s.petAdapter.Delete(ctx, req)
 	if err != nil {
 		return err
 	}
