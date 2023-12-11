@@ -4,6 +4,7 @@ go 1.21.5
 
 require (
 	github.com/getkin/kin-openapi v0.118.0
+	github.com/golang/mock v1.6.0
 	github.com/labstack/echo/v4 v4.11.3
 	github.com/oapi-codegen/runtime v1.1.0
 )
@@ -14,6 +15,7 @@ require (
 	github.com/go-openapi/swag v0.19.5 // indirect
 	github.com/google/uuid v1.4.0 // indirect
 	github.com/invopop/yaml v0.1.0 // indirect
+	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect

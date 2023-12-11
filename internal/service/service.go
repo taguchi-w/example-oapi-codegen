@@ -1,15 +1,16 @@
+//go:generate mockgen -source=service.go -destination=mocks/mock_service.go -package=mock
 package service
 
-type Services struct {
-	Pet *Pet
-}
+import (
+	"context"
 
-type Adapters struct {
-	PetManager PetManager
-}
+	"github.com/taguchi-w/example-oapi-codegen/pkg/api"
+)
 
-func New(adapters Adapters) Services {
-	return Services{
-		Pet: NewPet(adapters.PetManager),
-	}
+type PetAdapter interface {
+	Create(ctx context.Context, req CreatePetRequest) (*api.Pet, error)
+	Update(ctx context.Context, req UpdatePetRequest) (*api.Pet, error)
+	List(ctx context.Context, req GetPetsRequest) ([]*api.Pet, error)
+	Get(ctx context.Context, req GetPetRequest) (*api.Pet, error)
+	Delete(ctx context.Context, req DeletePetRequest) error
 }
