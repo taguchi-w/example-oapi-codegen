@@ -54,4 +54,4 @@ run-client:
 
 # すべてのタスクを実行
 .PHONY: all
-all: generate build
+all: generate lint build
