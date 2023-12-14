@@ -1,141 +1,76 @@
 package handler
 
 import (
-	"reflect"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
+	gomock "github.com/golang/mock/gomock"
+	"github.com/google/go-cmp/cmp"
 	"github.com/labstack/echo/v4"
+	"github.com/stretchr/testify/assert"
+	"github.com/taguchi-w/example-oapi-codegen/pkg/api"
+	"github.com/taguchi-w/example-oapi-codegen/pkg/util"
 )
 
-func TestNewPet(t *testing.T) {
-	type args struct {
-		pet PetService
-	}
+func TestPet_PostPets(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
 	tests := []struct {
-		name string
-		args args
-		want *Pet
+		name       string
+		wantErr    bool
+		want       *api.Pet
+		wantStatus int
+		mocks      map[string]interface{}
 	}{
 		{
-			name: "",
-			args: args{},
-			want: &Pet{},
+			name:    "",
+			wantErr: false,
+			mocks: map[string]interface{}{
+				"pet.Create.result": &api.Pet{
+					Id:   "1",
+					Name: "test",
+					Tag:  util.P("tag"),
+				},
+				"pet.Create.err": nil,
+			},
+			want: &api.Pet{
+				Id:   "1",
+				Name: "test",
+				Tag:  util.P("tag"),
+			},
+			wantStatus: http.StatusCreated,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewPet(tt.args.pet); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewPet() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+			e := echo.New()
+			req := httptest.NewRequest(http.MethodPost, "/", nil)
+			rec := httptest.NewRecorder()
+			ctx := e.NewContext(req, rec)
 
-func TestPet_GetPets(t *testing.T) {
-	type fields struct {
-		Pet PetService
-	}
-	type args struct {
-		ctx echo.Context
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			h := &Pet{
-				Pet: tt.fields.Pet,
-			}
-			if err := h.GetPets(tt.args.ctx); (err != nil) != tt.wantErr {
-				t.Errorf("Pet.GetPets() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func TestPet_PostPets(t *testing.T) {
-	type fields struct {
-		Pet PetService
-	}
-	type args struct {
-		ctx echo.Context
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			h := &Pet{
-				Pet: tt.fields.Pet,
-			}
-			if err := h.PostPets(tt.args.ctx); (err != nil) != tt.wantErr {
+			pet := NewMockPetService(ctrl)
+			pet.EXPECT().Create(gomock.Any(), gomock.Any()).Return(
+				tt.mocks["pet.Create.result"].(*api.Pet),
+				tt.mocks["pet.Create.err"],
+			)
+			h := &Pet{Pet: pet}
+			if err := h.PostPets(ctx); (err != nil) != tt.wantErr {
 				t.Errorf("Pet.PostPets() error = %v, wantErr %v", err, tt.wantErr)
 			}
-		})
-	}
-}
 
-func TestPet_UpdatePetPartial(t *testing.T) {
-	type fields struct {
-		Pet PetService
-	}
-	type args struct {
-		ctx   echo.Context
-		petId int
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			h := &Pet{
-				Pet: tt.fields.Pet,
-			}
-			if err := h.UpdatePetPartial(tt.args.ctx, tt.args.petId); (err != nil) != tt.wantErr {
-				t.Errorf("Pet.UpdatePetPartial() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
+			assert.Equal(t, rec.Result().StatusCode, tt.wantStatus)
 
-func TestPet_DeletePet(t *testing.T) {
-	type fields struct {
-		Pet PetService
-	}
-	type args struct {
-		ctx   echo.Context
-		petId int
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			h := &Pet{
-				Pet: tt.fields.Pet,
-			}
-			if err := h.DeletePet(tt.args.ctx, tt.args.petId); (err != nil) != tt.wantErr {
-				t.Errorf("Pet.DeletePet() error = %v, wantErr %v", err, tt.wantErr)
+			if !tt.wantErr {
+				var got api.Pet
+				if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil {
+					t.Errorf("Failed to unmarshal response: %v", err)
+				}
+				if diff := cmp.Diff(&got, tt.want); diff != "" {
+					t.Errorf("Pet.PostPets(got , want) \n%s", diff)
+				}
 			}
 		})
 	}

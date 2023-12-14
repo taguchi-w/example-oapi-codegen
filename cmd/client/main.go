@@ -15,7 +15,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	petId := 1 // ペットのID
+	petId := "1" // ペットのID
 
 	// post
 	resp, err := client.PostPets(ctx, api.PostPetsJSONRequestBody{

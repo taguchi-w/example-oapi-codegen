@@ -51,7 +51,7 @@ func NewServices(adapters Adapters) Services {
 }
 func NewAdapters(db interface{}) Adapters {
 	return Adapters{
-		Pet: adapter.NewPet(),
+		Pet: adapter.NewPet(nil, nil),
 	}
 }
 

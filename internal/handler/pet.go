@@ -33,7 +33,7 @@ func (h *Pet) GetPets(ctx echo.Context) error {
 func (h *Pet) PostPets(ctx echo.Context) error {
 	pet, err := h.Pet.Create(ctx.Request().Context(), service.CreatePetRequest{
 		Pet: api.Pet{
-			Id:   1,
+			Id:   "1",
 			Name: "cat",
 		},
 	})
@@ -43,7 +43,7 @@ func (h *Pet) PostPets(ctx echo.Context) error {
 	return ctx.JSON(http.StatusCreated, pet)
 }
 
-func (h *Pet) UpdatePetPartial(ctx echo.Context, petId int) error {
+func (h *Pet) UpdatePetPartial(ctx echo.Context, petId string) error {
 	pet, err := h.Pet.Update(ctx.Request().Context(), service.UpdatePetRequest{
 		Id:   1,
 		Name: util.P("cat"),
@@ -54,7 +54,7 @@ func (h *Pet) UpdatePetPartial(ctx echo.Context, petId int) error {
 	return ctx.JSON(http.StatusOK, pet)
 }
 
-func (h *Pet) DeletePet(ctx echo.Context, petId int) error {
+func (h *Pet) DeletePet(ctx echo.Context, petId string) error {
 	err := h.Pet.Delete(ctx.Request().Context(), service.DeletePetRequest{
 		Id: 1,
 	})

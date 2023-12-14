@@ -23,7 +23,7 @@ import (
 
 // Pet defines model for Pet.
 type Pet struct {
-	Id   int     `json:"id"`
+	Id   string  `json:"id"`
 	Name string  `json:"name"`
 	Tag  *string `json:"tag,omitempty"`
 }
@@ -122,12 +122,12 @@ type ClientInterface interface {
 	PostPets(ctx context.Context, body PostPetsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeletePet request
-	DeletePet(ctx context.Context, petId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+	DeletePet(ctx context.Context, petId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UpdatePetPartialWithBody request with any body
-	UpdatePetPartialWithBody(ctx context.Context, petId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdatePetPartialWithBody(ctx context.Context, petId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	UpdatePetPartial(ctx context.Context, petId int, body UpdatePetPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdatePetPartial(ctx context.Context, petId string, body UpdatePetPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) GetPets(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -166,7 +166,7 @@ func (c *Client) PostPets(ctx context.Context, body PostPetsJSONRequestBody, req
 	return c.Client.Do(req)
 }
 
-func (c *Client) DeletePet(ctx context.Context, petId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) DeletePet(ctx context.Context, petId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewDeletePetRequest(c.Server, petId)
 	if err != nil {
 		return nil, err
@@ -178,7 +178,7 @@ func (c *Client) DeletePet(ctx context.Context, petId int, reqEditors ...Request
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdatePetPartialWithBody(ctx context.Context, petId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) UpdatePetPartialWithBody(ctx context.Context, petId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdatePetPartialRequestWithBody(c.Server, petId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -190,7 +190,7 @@ func (c *Client) UpdatePetPartialWithBody(ctx context.Context, petId int, conten
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdatePetPartial(ctx context.Context, petId int, body UpdatePetPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) UpdatePetPartial(ctx context.Context, petId string, body UpdatePetPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdatePetPartialRequest(c.Server, petId, body)
 	if err != nil {
 		return nil, err
@@ -270,7 +270,7 @@ func NewPostPetsRequestWithBody(server string, contentType string, body io.Reade
 }
 
 // NewDeletePetRequest generates requests for DeletePet
-func NewDeletePetRequest(server string, petId int) (*http.Request, error) {
+func NewDeletePetRequest(server string, petId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -304,7 +304,7 @@ func NewDeletePetRequest(server string, petId int) (*http.Request, error) {
 }
 
 // NewUpdatePetPartialRequest calls the generic UpdatePetPartial builder with application/json body
-func NewUpdatePetPartialRequest(server string, petId int, body UpdatePetPartialJSONRequestBody) (*http.Request, error) {
+func NewUpdatePetPartialRequest(server string, petId string, body UpdatePetPartialJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
@@ -315,7 +315,7 @@ func NewUpdatePetPartialRequest(server string, petId int, body UpdatePetPartialJ
 }
 
 // NewUpdatePetPartialRequestWithBody generates requests for UpdatePetPartial with any type of body
-func NewUpdatePetPartialRequestWithBody(server string, petId int, contentType string, body io.Reader) (*http.Request, error) {
+func NewUpdatePetPartialRequestWithBody(server string, petId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -402,12 +402,12 @@ type ClientWithResponsesInterface interface {
 	PostPetsWithResponse(ctx context.Context, body PostPetsJSONRequestBody, reqEditors ...RequestEditorFn) (*PostPetsResponse, error)
 
 	// DeletePetWithResponse request
-	DeletePetWithResponse(ctx context.Context, petId int, reqEditors ...RequestEditorFn) (*DeletePetResponse, error)
+	DeletePetWithResponse(ctx context.Context, petId string, reqEditors ...RequestEditorFn) (*DeletePetResponse, error)
 
 	// UpdatePetPartialWithBodyWithResponse request with any body
-	UpdatePetPartialWithBodyWithResponse(ctx context.Context, petId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdatePetPartialResponse, error)
+	UpdatePetPartialWithBodyWithResponse(ctx context.Context, petId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdatePetPartialResponse, error)
 
-	UpdatePetPartialWithResponse(ctx context.Context, petId int, body UpdatePetPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdatePetPartialResponse, error)
+	UpdatePetPartialWithResponse(ctx context.Context, petId string, body UpdatePetPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdatePetPartialResponse, error)
 }
 
 type GetPetsResponse struct {
@@ -522,7 +522,7 @@ func (c *ClientWithResponses) PostPetsWithResponse(ctx context.Context, body Pos
 }
 
 // DeletePetWithResponse request returning *DeletePetResponse
-func (c *ClientWithResponses) DeletePetWithResponse(ctx context.Context, petId int, reqEditors ...RequestEditorFn) (*DeletePetResponse, error) {
+func (c *ClientWithResponses) DeletePetWithResponse(ctx context.Context, petId string, reqEditors ...RequestEditorFn) (*DeletePetResponse, error) {
 	rsp, err := c.DeletePet(ctx, petId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -531,7 +531,7 @@ func (c *ClientWithResponses) DeletePetWithResponse(ctx context.Context, petId i
 }
 
 // UpdatePetPartialWithBodyWithResponse request with arbitrary body returning *UpdatePetPartialResponse
-func (c *ClientWithResponses) UpdatePetPartialWithBodyWithResponse(ctx context.Context, petId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdatePetPartialResponse, error) {
+func (c *ClientWithResponses) UpdatePetPartialWithBodyWithResponse(ctx context.Context, petId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdatePetPartialResponse, error) {
 	rsp, err := c.UpdatePetPartialWithBody(ctx, petId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -539,7 +539,7 @@ func (c *ClientWithResponses) UpdatePetPartialWithBodyWithResponse(ctx context.C
 	return ParseUpdatePetPartialResponse(rsp)
 }
 
-func (c *ClientWithResponses) UpdatePetPartialWithResponse(ctx context.Context, petId int, body UpdatePetPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdatePetPartialResponse, error) {
+func (c *ClientWithResponses) UpdatePetPartialWithResponse(ctx context.Context, petId string, body UpdatePetPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdatePetPartialResponse, error) {
 	rsp, err := c.UpdatePetPartial(ctx, petId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -631,10 +631,10 @@ type ServerInterface interface {
 	PostPets(ctx echo.Context) error
 	// 指定されたIDのペットを削除
 	// (DELETE /pets/{petId})
-	DeletePet(ctx echo.Context, petId int) error
+	DeletePet(ctx echo.Context, petId string) error
 	// 指定されたIDのペットの部分的な情報を更新
 	// (PATCH /pets/{petId})
-	UpdatePetPartial(ctx echo.Context, petId int) error
+	UpdatePetPartial(ctx echo.Context, petId string) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -664,7 +664,7 @@ func (w *ServerInterfaceWrapper) PostPets(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) DeletePet(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "petId" -------------
-	var petId int
+	var petId string
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "petId", runtime.ParamLocationPath, ctx.Param("petId"), &petId)
 	if err != nil {
@@ -680,7 +680,7 @@ func (w *ServerInterfaceWrapper) DeletePet(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) UpdatePetPartial(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "petId" -------------
-	var petId int
+	var petId string
 
 	err = runtime.BindStyledParameterWithLocation("simple", false, "petId", runtime.ParamLocationPath, ctx.Param("petId"), &petId)
 	if err != nil {
@@ -730,17 +730,17 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/8SUT2sTTxjH30p5fr/j0qTa096UguQWEE+lh3H3aToluzOdeSKEsofdrVrTglKxpe2h",
-	"BYtKxaDgoR6sL2bY2L4LmdnGpEloqCBedpZn5vnz/TzPzDoEIpIixpg0+OuggxWMmPutI9lFKiFREUdn",
-	"5KH9Ulsi+MBjwgYqSDyIWYRDO5oUjxt2g1hjgj3xQOFaiysMwV+0Ua9CLHn9o+LxKgYEiT3L42XhonBq",
-	"2r2HPJJNnKkjaRIKZ+7Va+DBE1Saixh8mJutzlZtdiExZpKDD3edyQPJaMUpqUgsJTdKnVYlIy7iWgg+",
-	"PECy0cHWqaWIdSn/TrVql0DEhLFzY1I2eeAcK6vaZu9DdLgII+f4v8Jl8OG/ygB35Yp1xYJOfutmSrF2",
-	"KTtEHSguqRTV23xVdI4cO92KIqba4IPJD0yem3zTpF2Tn5rsm/3PdoqXu8X5ng0rhZ6gry70QOBaCzXd",
-	"F2H7VtqmSrreZVItTMZwztnlus6BpGzn4sf3onNs0j2TnrvvqP7e7mdn3xj3ciddlyvrEqkWJmWuJhKO",
-	"A1lwdlu3nRHFIiRUGvzF0fKKF53L/ROT7ptsa5h+bQHsoILvRqw/zz641DBKwhsCOXqbkqUxTPM3YUq3",
-	"e5/eFmdnJv3YL+6NybaHkHkwPy3Exbstk56YdMtkHed5aLLXJn0/mfr286J70E9zVFtw0zdoQFmGmz5G",
-	"wco47UcyZI52nSnirDkNeu/wq+v034b+Zzfh+hN5+6dwwos37d5Ub+xmt5c/LY6/DE9Gn+A/nYy0e5l/",
-	"KDaf/TzYMOnpVZHZTlmbFZ78CgAA//8hvB5RkAYAAA==",
+	"H4sIAAAAAAAC/8SUT2vUThjH30p5fr9jaLbaU25KQfa2IJ5KD2PytJ2yyUxnZoWl5JCkat0uKCu2dHto",
+	"waJScVHwUA/WFzNkbd+FzGTj/qVLBfGSCc/M8+f7eZ6ZHfBZyFmEkZLg7YD0NzEk9reGyixcMI5CUbRG",
+	"GpivanIED6QSNNqA2IGIhDhzQ5GNGfbYAYHbDSowAG/VBB2EWHPKo+zxFvoKYnOWRuvMRqGqbvYe0pDX",
+	"caGGSiomcOFerQoOPEEhKYvAg6XFymLFZGccI8IpeHDXmhzgRG1aIS7HQvFGIdOIJIqyqBqABw9Qmehg",
+	"6pScRbJQf6dSMYvPIoWRdSOc16lvHd0tabKXDC0thaF1/F/gOnjwnzuk7Q5Qu4Zz/Fs3EYI0C9kBSl9Q",
+	"rgpR/b1XeevEspONMCSiCR7orKuzTGd7Ounp7Fyn38x/2slfHuSXhyYsZ3KGvhqTQ4HbDZTqPguat9I2",
+	"V9J4l5VoYDyFc8ks4zqHktLO1Y/veetUJ4c6ubTfSf39g8/WvjvtZU/aLrs7HFU1iItcdVQ4DWTF2k3d",
+	"ZkYECVGhkOCtTpaXv2hdH53p5Ein+6P0qytgBhU8O2LlPHtgU8MkCWcE5OTdWJuitHwTpaTd//Q2v7jQ",
+	"yceytjc6bY8Qc2B5Xoird/s6OdPJvk5b1vNYp6918n429PbzvNct05xUV+zwDfkXZdjhI8rfnIb9iAfE",
+	"wq4RoSipz2PeP/5qG/2Xmf/ZPRh/H2//EM547+bdmsqNzez1s6f56ZfRwSgB/tPBSHrX2Yd879nP7q5O",
+	"zgdFpp2iNiM8/hUAAP//7jCdOY0GAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
