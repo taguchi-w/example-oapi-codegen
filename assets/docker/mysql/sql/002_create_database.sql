@@ -1,1 +1,1 @@
-CREATE DATABASE example-oapi-codegen;
+CREATE DATABASE oapicodegen;
