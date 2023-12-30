@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql/mysql-server:8.0
+    container_name: mysql8
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      TZ: 'Asia/Tokyo'
+    volumes:
+      - ./assets/docker/mysql/config/my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+      - ./assets/docker/mysql/sql:/docker-entrypoint-initdb.d
+    restart: always
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
