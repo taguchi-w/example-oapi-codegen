@@ -1,4 +1,13 @@
 
 -- +migrate Up
 
+CREATE TABLE todo (
+    id VARCHAR(20) PRIMARY KEY,
+    subject VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    body TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 -- +migrate Down
+
+DROP TABLE todo;

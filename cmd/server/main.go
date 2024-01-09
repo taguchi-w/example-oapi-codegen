@@ -30,28 +30,28 @@ func main() {
 // dependency injection
 
 type Handlers struct {
-	*handler.Pet
+	*handler.Todo
 }
 type Services struct {
-	Pet *service.Pet
+	Todo *service.Todo
 }
 type Adapters struct {
-	Pet *adapter.Pet
+	Todo *adapter.Todo
 }
 
 func NewHandlers(services Services) Handlers {
 	return Handlers{
-		Pet: handler.NewPet(services.Pet),
+		Todo: handler.NewTodo(services.Todo),
 	}
 }
 func NewServices(adapters Adapters) Services {
 	return Services{
-		Pet: service.NewPet(adapters.Pet),
+		Todo: service.NewTodo(adapters.Todo),
 	}
 }
 func NewAdapters(db interface{}) Adapters {
 	return Adapters{
-		Pet: adapter.NewPet(nil, nil),
+		Todo: adapter.NewTodo(nil, nil),
 	}
 }
 

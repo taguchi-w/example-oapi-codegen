@@ -1,5 +1,9 @@
 # Makefile
 
+# ------------
+# go build
+# ------------
+
 # ビルド出力先
 BINARY_NAME=bin/server
 
@@ -9,7 +13,6 @@ SPEC_FILE=docs/api/api.yaml
 # 生成されるGoコードのパッケージと出力先
 GENERATED_DIR=pkg/api
 GENERATED_PACKAGE=api
-
 # エントリーポイント
 SERVER_ENTRY_POINT=cmd/server/main.go
 CLIENT_ENTRY_POINT=cmd/client/main.go
@@ -27,31 +30,56 @@ generate-mock:
 generate:
 	make generate-api
 	make generate-mock
-# 
+
 .PHONY: lint
 lint:
 	staticcheck ./...	
 
-# ビルド
+.PHONY: test
+test:
+	go test ./...	
+
 .PHONY: build
 build:
-	go build -o $(BINARY_NAME) cmd/server/main.go
+	go build -o $(BINARY_NAME) cmd/server/main.g
 
-# クリーンアップ
 .PHONY: clean
 clean:
 	rm $(BINARY_NAME)
 	rm $(GENERATED_DIR)/api.gen.go
 
-# 実行
 .PHONY: run-server
 run-server:
 	go run $(SERVER_ENTRY_POINT)
-# 実行
+
 .PHONY: run-client
 run-client:
 	go run $(CLIENT_ENTRY_POINT)
 
+# ------------
+# sql-migrate
+# ------------
+SQL_MIGRATE_DIR=./assets/sql-migrate 
+SQL_MIGRATE_ENV=dev
+SQL_MIGRATE_DB=oapicodegen
+SQL_DUMP_DIR=./assets/docker/mysql/ddl
+
+.PHONY: sql-migrate-state
+sql-migrate-state:
+	cd $(SQL_MIGRATE_DIR)/ && sql-migrate status -env=$(SQL_MIGRATE_ENV)
+.PHONY: sql-migrate-up
+sql-migrate-up:
+	cd $(SQL_MIGRATE_DIR)/ && sql-migrate up -env=$(SQL_MIGRATE_ENV)
+.PHONY: sql-migrate-down
+sql-migrate-down:
+	cd $(SQL_MIGRATE_DIR)/ && sql-migrate down -env=$(SQL_MIGRATE_ENV)
+.PHONY: sql-dump
+sql-dump:
+	echo "USE $(SQL_MIGRATE_DB);" > $(SQL_DUMP_DIR)/003_create_tables.sql
+	mysqldump -u root --protocol=tcp --no-data $(SQL_MIGRATE_DB) >> $(SQL_DUMP_DIR)/003_create_tables.sql
+	echo "USE $(SQL_MIGRATE_DB);" > $(SQL_DUMP_DIR)/004_init_tabels.sql
+	mysqldump -u root --protocol=tcp --no-create-info $(SQL_MIGRATE_DB) gorp_migrations >> $(SQL_DUMP_DIR)/004_init_tabels.sql
+
 # すべてのタスクを実行
 .PHONY: all
-all: generate lint build
+all: generate lint test build

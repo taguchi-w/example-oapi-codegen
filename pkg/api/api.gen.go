@@ -15,30 +15,33 @@ import (
 	"net/url"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 	"github.com/oapi-codegen/runtime"
 )
 
-// Pet defines model for Pet.
-type Pet struct {
-	Id   string  `json:"id"`
-	Name string  `json:"name"`
-	Tag  *string `json:"tag,omitempty"`
+// Todo defines model for Todo.
+type Todo struct {
+	Body      *string    `json:"body,omitempty"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	Id        string     `json:"id"`
+	Subject   string     `json:"subject"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
 
-// UpdatePetPartialJSONBody defines parameters for UpdatePetPartial.
-type UpdatePetPartialJSONBody struct {
-	Name *string `json:"name,omitempty"`
-	Tag  *string `json:"tag,omitempty"`
+// UpdateTodoPartialJSONBody defines parameters for UpdateTodoPartial.
+type UpdateTodoPartialJSONBody struct {
+	Body    *string `json:"body,omitempty"`
+	Subject *string `json:"subject,omitempty"`
 }
 
-// PostPetsJSONRequestBody defines body for PostPets for application/json ContentType.
-type PostPetsJSONRequestBody = Pet
+// PostTodosJSONRequestBody defines body for PostTodos for application/json ContentType.
+type PostTodosJSONRequestBody = Todo
 
-// UpdatePetPartialJSONRequestBody defines body for UpdatePetPartial for application/json ContentType.
-type UpdatePetPartialJSONRequestBody UpdatePetPartialJSONBody
+// UpdateTodoPartialJSONRequestBody defines body for UpdateTodoPartial for application/json ContentType.
+type UpdateTodoPartialJSONRequestBody UpdateTodoPartialJSONBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -113,25 +116,25 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// GetPets request
-	GetPets(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetTodos request
+	GetTodos(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// PostPetsWithBody request with any body
-	PostPetsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// PostTodosWithBody request with any body
+	PostTodosWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	PostPets(ctx context.Context, body PostPetsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	PostTodos(ctx context.Context, body PostTodosJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// DeletePet request
-	DeletePet(ctx context.Context, petId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// DeleteTodo request
+	DeleteTodo(ctx context.Context, todoId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// UpdatePetPartialWithBody request with any body
-	UpdatePetPartialWithBody(ctx context.Context, petId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateTodoPartialWithBody request with any body
+	UpdateTodoPartialWithBody(ctx context.Context, todoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	UpdatePetPartial(ctx context.Context, petId string, body UpdatePetPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateTodoPartial(ctx context.Context, todoId string, body UpdateTodoPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) GetPets(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetPetsRequest(c.Server)
+func (c *Client) GetTodos(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTodosRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -142,8 +145,8 @@ func (c *Client) GetPets(ctx context.Context, reqEditors ...RequestEditorFn) (*h
 	return c.Client.Do(req)
 }
 
-func (c *Client) PostPetsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostPetsRequestWithBody(c.Server, contentType, body)
+func (c *Client) PostTodosWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostTodosRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -154,8 +157,8 @@ func (c *Client) PostPetsWithBody(ctx context.Context, contentType string, body 
 	return c.Client.Do(req)
 }
 
-func (c *Client) PostPets(ctx context.Context, body PostPetsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostPetsRequest(c.Server, body)
+func (c *Client) PostTodos(ctx context.Context, body PostTodosJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostTodosRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -166,8 +169,8 @@ func (c *Client) PostPets(ctx context.Context, body PostPetsJSONRequestBody, req
 	return c.Client.Do(req)
 }
 
-func (c *Client) DeletePet(ctx context.Context, petId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeletePetRequest(c.Server, petId)
+func (c *Client) DeleteTodo(ctx context.Context, todoId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteTodoRequest(c.Server, todoId)
 	if err != nil {
 		return nil, err
 	}
@@ -178,8 +181,8 @@ func (c *Client) DeletePet(ctx context.Context, petId string, reqEditors ...Requ
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdatePetPartialWithBody(ctx context.Context, petId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdatePetPartialRequestWithBody(c.Server, petId, contentType, body)
+func (c *Client) UpdateTodoPartialWithBody(ctx context.Context, todoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateTodoPartialRequestWithBody(c.Server, todoId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -190,8 +193,8 @@ func (c *Client) UpdatePetPartialWithBody(ctx context.Context, petId string, con
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdatePetPartial(ctx context.Context, petId string, body UpdatePetPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdatePetPartialRequest(c.Server, petId, body)
+func (c *Client) UpdateTodoPartial(ctx context.Context, todoId string, body UpdateTodoPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateTodoPartialRequest(c.Server, todoId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -202,8 +205,8 @@ func (c *Client) UpdatePetPartial(ctx context.Context, petId string, body Update
 	return c.Client.Do(req)
 }
 
-// NewGetPetsRequest generates requests for GetPets
-func NewGetPetsRequest(server string) (*http.Request, error) {
+// NewGetTodosRequest generates requests for GetTodos
+func NewGetTodosRequest(server string) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -211,7 +214,7 @@ func NewGetPetsRequest(server string) (*http.Request, error) {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/pets")
+	operationPath := fmt.Sprintf("/todos")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -229,19 +232,19 @@ func NewGetPetsRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewPostPetsRequest calls the generic PostPets builder with application/json body
-func NewPostPetsRequest(server string, body PostPetsJSONRequestBody) (*http.Request, error) {
+// NewPostTodosRequest calls the generic PostTodos builder with application/json body
+func NewPostTodosRequest(server string, body PostTodosJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewPostPetsRequestWithBody(server, "application/json", bodyReader)
+	return NewPostTodosRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewPostPetsRequestWithBody generates requests for PostPets with any type of body
-func NewPostPetsRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewPostTodosRequestWithBody generates requests for PostTodos with any type of body
+func NewPostTodosRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -249,7 +252,7 @@ func NewPostPetsRequestWithBody(server string, contentType string, body io.Reade
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/pets")
+	operationPath := fmt.Sprintf("/todos")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -269,13 +272,13 @@ func NewPostPetsRequestWithBody(server string, contentType string, body io.Reade
 	return req, nil
 }
 
-// NewDeletePetRequest generates requests for DeletePet
-func NewDeletePetRequest(server string, petId string) (*http.Request, error) {
+// NewDeleteTodoRequest generates requests for DeleteTodo
+func NewDeleteTodoRequest(server string, todoId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "petId", runtime.ParamLocationPath, petId)
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "todoId", runtime.ParamLocationPath, todoId)
 	if err != nil {
 		return nil, err
 	}
@@ -285,7 +288,7 @@ func NewDeletePetRequest(server string, petId string) (*http.Request, error) {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/pets/%s", pathParam0)
+	operationPath := fmt.Sprintf("/todos/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -303,24 +306,24 @@ func NewDeletePetRequest(server string, petId string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewUpdatePetPartialRequest calls the generic UpdatePetPartial builder with application/json body
-func NewUpdatePetPartialRequest(server string, petId string, body UpdatePetPartialJSONRequestBody) (*http.Request, error) {
+// NewUpdateTodoPartialRequest calls the generic UpdateTodoPartial builder with application/json body
+func NewUpdateTodoPartialRequest(server string, todoId string, body UpdateTodoPartialJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewUpdatePetPartialRequestWithBody(server, petId, "application/json", bodyReader)
+	return NewUpdateTodoPartialRequestWithBody(server, todoId, "application/json", bodyReader)
 }
 
-// NewUpdatePetPartialRequestWithBody generates requests for UpdatePetPartial with any type of body
-func NewUpdatePetPartialRequestWithBody(server string, petId string, contentType string, body io.Reader) (*http.Request, error) {
+// NewUpdateTodoPartialRequestWithBody generates requests for UpdateTodoPartial with any type of body
+func NewUpdateTodoPartialRequestWithBody(server string, todoId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "petId", runtime.ParamLocationPath, petId)
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "todoId", runtime.ParamLocationPath, todoId)
 	if err != nil {
 		return nil, err
 	}
@@ -330,7 +333,7 @@ func NewUpdatePetPartialRequestWithBody(server string, petId string, contentType
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/pets/%s", pathParam0)
+	operationPath := fmt.Sprintf("/todos/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -393,31 +396,31 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// GetPetsWithResponse request
-	GetPetsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetPetsResponse, error)
+	// GetTodosWithResponse request
+	GetTodosWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTodosResponse, error)
 
-	// PostPetsWithBodyWithResponse request with any body
-	PostPetsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostPetsResponse, error)
+	// PostTodosWithBodyWithResponse request with any body
+	PostTodosWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostTodosResponse, error)
 
-	PostPetsWithResponse(ctx context.Context, body PostPetsJSONRequestBody, reqEditors ...RequestEditorFn) (*PostPetsResponse, error)
+	PostTodosWithResponse(ctx context.Context, body PostTodosJSONRequestBody, reqEditors ...RequestEditorFn) (*PostTodosResponse, error)
 
-	// DeletePetWithResponse request
-	DeletePetWithResponse(ctx context.Context, petId string, reqEditors ...RequestEditorFn) (*DeletePetResponse, error)
+	// DeleteTodoWithResponse request
+	DeleteTodoWithResponse(ctx context.Context, todoId string, reqEditors ...RequestEditorFn) (*DeleteTodoResponse, error)
 
-	// UpdatePetPartialWithBodyWithResponse request with any body
-	UpdatePetPartialWithBodyWithResponse(ctx context.Context, petId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdatePetPartialResponse, error)
+	// UpdateTodoPartialWithBodyWithResponse request with any body
+	UpdateTodoPartialWithBodyWithResponse(ctx context.Context, todoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateTodoPartialResponse, error)
 
-	UpdatePetPartialWithResponse(ctx context.Context, petId string, body UpdatePetPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdatePetPartialResponse, error)
+	UpdateTodoPartialWithResponse(ctx context.Context, todoId string, body UpdateTodoPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateTodoPartialResponse, error)
 }
 
-type GetPetsResponse struct {
+type GetTodosResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]Pet
+	JSON200      *[]Todo
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPetsResponse) Status() string {
+func (r GetTodosResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -425,20 +428,20 @@ func (r GetPetsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPetsResponse) StatusCode() int {
+func (r GetTodosResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type PostPetsResponse struct {
+type PostTodosResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r PostPetsResponse) Status() string {
+func (r PostTodosResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -446,20 +449,20 @@ func (r PostPetsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r PostPetsResponse) StatusCode() int {
+func (r PostTodosResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type DeletePetResponse struct {
+type DeleteTodoResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r DeletePetResponse) Status() string {
+func (r DeleteTodoResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -467,20 +470,20 @@ func (r DeletePetResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r DeletePetResponse) StatusCode() int {
+func (r DeleteTodoResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type UpdatePetPartialResponse struct {
+type UpdateTodoPartialResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r UpdatePetPartialResponse) Status() string {
+func (r UpdateTodoPartialResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -488,81 +491,81 @@ func (r UpdatePetPartialResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r UpdatePetPartialResponse) StatusCode() int {
+func (r UpdateTodoPartialResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-// GetPetsWithResponse request returning *GetPetsResponse
-func (c *ClientWithResponses) GetPetsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetPetsResponse, error) {
-	rsp, err := c.GetPets(ctx, reqEditors...)
+// GetTodosWithResponse request returning *GetTodosResponse
+func (c *ClientWithResponses) GetTodosWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTodosResponse, error) {
+	rsp, err := c.GetTodos(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetPetsResponse(rsp)
+	return ParseGetTodosResponse(rsp)
 }
 
-// PostPetsWithBodyWithResponse request with arbitrary body returning *PostPetsResponse
-func (c *ClientWithResponses) PostPetsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostPetsResponse, error) {
-	rsp, err := c.PostPetsWithBody(ctx, contentType, body, reqEditors...)
+// PostTodosWithBodyWithResponse request with arbitrary body returning *PostTodosResponse
+func (c *ClientWithResponses) PostTodosWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostTodosResponse, error) {
+	rsp, err := c.PostTodosWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParsePostPetsResponse(rsp)
+	return ParsePostTodosResponse(rsp)
 }
 
-func (c *ClientWithResponses) PostPetsWithResponse(ctx context.Context, body PostPetsJSONRequestBody, reqEditors ...RequestEditorFn) (*PostPetsResponse, error) {
-	rsp, err := c.PostPets(ctx, body, reqEditors...)
+func (c *ClientWithResponses) PostTodosWithResponse(ctx context.Context, body PostTodosJSONRequestBody, reqEditors ...RequestEditorFn) (*PostTodosResponse, error) {
+	rsp, err := c.PostTodos(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParsePostPetsResponse(rsp)
+	return ParsePostTodosResponse(rsp)
 }
 
-// DeletePetWithResponse request returning *DeletePetResponse
-func (c *ClientWithResponses) DeletePetWithResponse(ctx context.Context, petId string, reqEditors ...RequestEditorFn) (*DeletePetResponse, error) {
-	rsp, err := c.DeletePet(ctx, petId, reqEditors...)
+// DeleteTodoWithResponse request returning *DeleteTodoResponse
+func (c *ClientWithResponses) DeleteTodoWithResponse(ctx context.Context, todoId string, reqEditors ...RequestEditorFn) (*DeleteTodoResponse, error) {
+	rsp, err := c.DeleteTodo(ctx, todoId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseDeletePetResponse(rsp)
+	return ParseDeleteTodoResponse(rsp)
 }
 
-// UpdatePetPartialWithBodyWithResponse request with arbitrary body returning *UpdatePetPartialResponse
-func (c *ClientWithResponses) UpdatePetPartialWithBodyWithResponse(ctx context.Context, petId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdatePetPartialResponse, error) {
-	rsp, err := c.UpdatePetPartialWithBody(ctx, petId, contentType, body, reqEditors...)
+// UpdateTodoPartialWithBodyWithResponse request with arbitrary body returning *UpdateTodoPartialResponse
+func (c *ClientWithResponses) UpdateTodoPartialWithBodyWithResponse(ctx context.Context, todoId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateTodoPartialResponse, error) {
+	rsp, err := c.UpdateTodoPartialWithBody(ctx, todoId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseUpdatePetPartialResponse(rsp)
+	return ParseUpdateTodoPartialResponse(rsp)
 }
 
-func (c *ClientWithResponses) UpdatePetPartialWithResponse(ctx context.Context, petId string, body UpdatePetPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdatePetPartialResponse, error) {
-	rsp, err := c.UpdatePetPartial(ctx, petId, body, reqEditors...)
+func (c *ClientWithResponses) UpdateTodoPartialWithResponse(ctx context.Context, todoId string, body UpdateTodoPartialJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateTodoPartialResponse, error) {
+	rsp, err := c.UpdateTodoPartial(ctx, todoId, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseUpdatePetPartialResponse(rsp)
+	return ParseUpdateTodoPartialResponse(rsp)
 }
 
-// ParseGetPetsResponse parses an HTTP response from a GetPetsWithResponse call
-func ParseGetPetsResponse(rsp *http.Response) (*GetPetsResponse, error) {
+// ParseGetTodosResponse parses an HTTP response from a GetTodosWithResponse call
+func ParseGetTodosResponse(rsp *http.Response) (*GetTodosResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPetsResponse{
+	response := &GetTodosResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []Pet
+		var dest []Todo
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -573,15 +576,15 @@ func ParseGetPetsResponse(rsp *http.Response) (*GetPetsResponse, error) {
 	return response, nil
 }
 
-// ParsePostPetsResponse parses an HTTP response from a PostPetsWithResponse call
-func ParsePostPetsResponse(rsp *http.Response) (*PostPetsResponse, error) {
+// ParsePostTodosResponse parses an HTTP response from a PostTodosWithResponse call
+func ParsePostTodosResponse(rsp *http.Response) (*PostTodosResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &PostPetsResponse{
+	response := &PostTodosResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -589,15 +592,15 @@ func ParsePostPetsResponse(rsp *http.Response) (*PostPetsResponse, error) {
 	return response, nil
 }
 
-// ParseDeletePetResponse parses an HTTP response from a DeletePetWithResponse call
-func ParseDeletePetResponse(rsp *http.Response) (*DeletePetResponse, error) {
+// ParseDeleteTodoResponse parses an HTTP response from a DeleteTodoWithResponse call
+func ParseDeleteTodoResponse(rsp *http.Response) (*DeleteTodoResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &DeletePetResponse{
+	response := &DeleteTodoResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -605,15 +608,15 @@ func ParseDeletePetResponse(rsp *http.Response) (*DeletePetResponse, error) {
 	return response, nil
 }
 
-// ParseUpdatePetPartialResponse parses an HTTP response from a UpdatePetPartialWithResponse call
-func ParseUpdatePetPartialResponse(rsp *http.Response) (*UpdatePetPartialResponse, error) {
+// ParseUpdateTodoPartialResponse parses an HTTP response from a UpdateTodoPartialWithResponse call
+func ParseUpdateTodoPartialResponse(rsp *http.Response) (*UpdateTodoPartialResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &UpdatePetPartialResponse{
+	response := &UpdateTodoPartialResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -623,18 +626,18 @@ func ParseUpdatePetPartialResponse(rsp *http.Response) (*UpdatePetPartialRespons
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// ペットのリストを取得
-	// (GET /pets)
-	GetPets(ctx echo.Context) error
-	// 新しいペットを追加
-	// (POST /pets)
-	PostPets(ctx echo.Context) error
-	// 指定されたIDのペットを削除
-	// (DELETE /pets/{petId})
-	DeletePet(ctx echo.Context, petId string) error
-	// 指定されたIDのペットの部分的な情報を更新
-	// (PATCH /pets/{petId})
-	UpdatePetPartial(ctx echo.Context, petId string) error
+	// TODOのリストを取得
+	// (GET /todos)
+	GetTodos(ctx echo.Context) error
+	// 新しいTODOを追加
+	// (POST /todos)
+	PostTodos(ctx echo.Context) error
+	// 指定されたIDのTODOを削除
+	// (DELETE /todos/{todoId})
+	DeleteTodo(ctx echo.Context, todoId string) error
+	// 指定されたIDのTODOの部分的な情報を更新
+	// (PATCH /todos/{todoId})
+	UpdateTodoPartial(ctx echo.Context, todoId string) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -642,53 +645,53 @@ type ServerInterfaceWrapper struct {
 	Handler ServerInterface
 }
 
-// GetPets converts echo context to params.
-func (w *ServerInterfaceWrapper) GetPets(ctx echo.Context) error {
+// GetTodos converts echo context to params.
+func (w *ServerInterfaceWrapper) GetTodos(ctx echo.Context) error {
 	var err error
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetPets(ctx)
+	err = w.Handler.GetTodos(ctx)
 	return err
 }
 
-// PostPets converts echo context to params.
-func (w *ServerInterfaceWrapper) PostPets(ctx echo.Context) error {
+// PostTodos converts echo context to params.
+func (w *ServerInterfaceWrapper) PostTodos(ctx echo.Context) error {
 	var err error
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PostPets(ctx)
+	err = w.Handler.PostTodos(ctx)
 	return err
 }
 
-// DeletePet converts echo context to params.
-func (w *ServerInterfaceWrapper) DeletePet(ctx echo.Context) error {
+// DeleteTodo converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteTodo(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "petId" -------------
-	var petId string
+	// ------------- Path parameter "todoId" -------------
+	var todoId string
 
-	err = runtime.BindStyledParameterWithLocation("simple", false, "petId", runtime.ParamLocationPath, ctx.Param("petId"), &petId)
+	err = runtime.BindStyledParameterWithLocation("simple", false, "todoId", runtime.ParamLocationPath, ctx.Param("todoId"), &todoId)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter petId: %s", err))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter todoId: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.DeletePet(ctx, petId)
+	err = w.Handler.DeleteTodo(ctx, todoId)
 	return err
 }
 
-// UpdatePetPartial converts echo context to params.
-func (w *ServerInterfaceWrapper) UpdatePetPartial(ctx echo.Context) error {
+// UpdateTodoPartial converts echo context to params.
+func (w *ServerInterfaceWrapper) UpdateTodoPartial(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "petId" -------------
-	var petId string
+	// ------------- Path parameter "todoId" -------------
+	var todoId string
 
-	err = runtime.BindStyledParameterWithLocation("simple", false, "petId", runtime.ParamLocationPath, ctx.Param("petId"), &petId)
+	err = runtime.BindStyledParameterWithLocation("simple", false, "todoId", runtime.ParamLocationPath, ctx.Param("todoId"), &todoId)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter petId: %s", err))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter todoId: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.UpdatePetPartial(ctx, petId)
+	err = w.Handler.UpdateTodoPartial(ctx, todoId)
 	return err
 }
 
@@ -720,27 +723,27 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/pets", wrapper.GetPets)
-	router.POST(baseURL+"/pets", wrapper.PostPets)
-	router.DELETE(baseURL+"/pets/:petId", wrapper.DeletePet)
-	router.PATCH(baseURL+"/pets/:petId", wrapper.UpdatePetPartial)
+	router.GET(baseURL+"/todos", wrapper.GetTodos)
+	router.POST(baseURL+"/todos", wrapper.PostTodos)
+	router.DELETE(baseURL+"/todos/:todoId", wrapper.DeleteTodo)
+	router.PATCH(baseURL+"/todos/:todoId", wrapper.UpdateTodoPartial)
 
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/8SUT2vUThjH30p5fr9jaLbaU25KQfa2IJ5KD2PytJ2yyUxnZoWl5JCkat0uKCu2dHto",
-	"waJScVHwUA/WFzNkbd+FzGTj/qVLBfGSCc/M8+f7eZ6ZHfBZyFmEkZLg7YD0NzEk9reGyixcMI5CUbRG",
-	"GpivanIED6QSNNqA2IGIhDhzQ5GNGfbYAYHbDSowAG/VBB2EWHPKo+zxFvoKYnOWRuvMRqGqbvYe0pDX",
-	"caGGSiomcOFerQoOPEEhKYvAg6XFymLFZGccI8IpeHDXmhzgRG1aIS7HQvFGIdOIJIqyqBqABw9Qmehg",
-	"6pScRbJQf6dSMYvPIoWRdSOc16lvHd0tabKXDC0thaF1/F/gOnjwnzuk7Q5Qu4Zz/Fs3EYI0C9kBSl9Q",
-	"rgpR/b1XeevEspONMCSiCR7orKuzTGd7Ounp7Fyn38x/2slfHuSXhyYsZ3KGvhqTQ4HbDZTqPguat9I2",
-	"V9J4l5VoYDyFc8ks4zqHktLO1Y/veetUJ4c6ubTfSf39g8/WvjvtZU/aLrs7HFU1iItcdVQ4DWTF2k3d",
-	"ZkYECVGhkOCtTpaXv2hdH53p5Ein+6P0qytgBhU8O2LlPHtgU8MkCWcE5OTdWJuitHwTpaTd//Q2v7jQ",
-	"yceytjc6bY8Qc2B5Xoird/s6OdPJvk5b1vNYp6918n429PbzvNct05xUV+zwDfkXZdjhI8rfnIb9iAfE",
-	"wq4RoSipz2PeP/5qG/2Xmf/ZPRh/H2//EM547+bdmsqNzez1s6f56ZfRwSgB/tPBSHrX2Yd879nP7q5O",
-	"zgdFpp2iNiM8/hUAAP//7jCdOY0GAAA=",
+	"H4sIAAAAAAAC/7yUz08UMRTH/xXy9Diyi3KaG2YTsydIxBPhUGYeULIzLW3XZEPm0FlUXDbRYIQAB0gk",
+	"ajBuNPGAB/GPaWaF/8K0s/zaGQKa6GXatH3z3vfzfe0KBCziLMZYSfBXQAaLGBE3nWYhsyMXjKNQFN3q",
+	"HAtbdlQtjuCDVILGC5B4EAgkCsMJZXfnmYiIAh9CovCeohGCVwyhYemfZHNuCQNVutfk4Z9lSTwQuNyk",
+	"AkPwZ2zKiwSz56dZvpDY4zSed7oVVQ2795hGvIEjFsfIxFQdPHiKQlIWgw9jo9XRqq2LcYwJp+DDA7fk",
+	"ASdq0RGrKBYyN1tAV7bFSRRlcT0EHx6hmnYHbKGSs1jmoO9Xq3YIWKwwdnGE8wYNXGRlSdr8Z37ZGVUY",
+	"ucC7AufBhzuVC2crA1srztPkXDYRgrRy1SHKQFCucl39tddZZ8/Rk80oIqIFPkxP1iaN7pn2oUm/m/aa",
+	"STeyV5vZ8Zb9I2eyRNwUk5fULTdRqoeDBrq1sJv1XDVZiSYmBZhjdrgq0ulJN05+/sg6+0ZvGX3svsO6",
+	"+5tf3PrqlQB3KPe2smKHepjkORqosIii5tZdwbY5BIlQoZDgzwzXlb3snG4fGL1t0vUB83oNbGOC79oK",
+	"PIhJZA3M88KwfO8SvuH7MFtAM15EYx0dL9vI6+mevF83+sDodZN2HLZdk74x+kM5v+6LrLdj9FuTdo3e",
+	"q9eM7g1Q5lJd/xAVLBapPXH33VKbIkJR0rgJXn/3m/PrH8L7uza+5TN6/eOXlL5WN/V99ToPe/32s2z/",
+	"q9Hd/ud32dGR0Z/O2OVGnV+G/9EKunfa/pitPf+1s2r04aC0dCOvyCpNfgcAAP//HzIEjKoGAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

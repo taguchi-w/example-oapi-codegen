@@ -8,10 +8,10 @@ import (
 	"github.com/taguchi-w/example-oapi-codegen/pkg/api"
 )
 
-type PetService interface {
-	Create(ctx context.Context, req service.CreatePetRequest) (*api.Pet, error)
-	List(ctx context.Context, req service.GetPetsRequest) ([]*api.Pet, error)
-	Get(ctx context.Context, req service.GetPetRequest) (*api.Pet, error)
-	Update(ctx context.Context, req service.UpdatePetRequest) (*api.Pet, error)
-	Delete(ctx context.Context, req service.DeletePetRequest) error
+type TodoService interface {
+	Create(ctx context.Context, req service.CreateTodoRequest) (*api.Todo, error)
+	List(ctx context.Context, req service.GetTodosRequest) ([]*api.Todo, error)
+	Get(ctx context.Context, req service.GetTodoRequest) (*api.Todo, error)
+	Update(ctx context.Context, req service.UpdateTodoRequest) (*api.Todo, error)
+	Delete(ctx context.Context, req service.DeleteTodoRequest) error
 }

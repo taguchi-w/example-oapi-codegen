@@ -1,11 +1,11 @@
 openapi: 3.0.0
 info:
-  title: Simple Petstore API
+  title: Simple Todo API
   version: 1.0.0
 paths:
-  /pets:
+  /todos:
     get:
-      summary: ペットのリストを取得
+      summary: TODOのリストを取得
       responses:
         '200':
           description: 成功
@@ -14,27 +14,27 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Pet'
+                  $ref: '#/components/schemas/Todo'
     post:
-      summary: 新しいペットを追加
+      summary: 新しいTODOを追加
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: '#/components/schemas/Todo'
       responses:
         '201':
-          description: ペットを追加しました
-  /pets/{petId}:
+          description: TODOを追加しました
+  /todos/{todoId}:
     patch:
-      summary: 指定されたIDのペットの部分的な情報を更新
-      operationId: updatePetPartial
+      summary: 指定されたIDのTODOの部分的な情報を更新
+      operationId: updateTodoPartial
       parameters:
-        - name: petId
+        - name: todoId
           in: path
           required: true
-          description: 更新するペットのID
+          description: 更新するTODOのID
           schema:
             type: string
       requestBody:
@@ -44,41 +44,47 @@ paths:
             schema:
               type: object
               properties:
-                name:
+                subject:
                   type: string
-                tag:
+                body:
                   type: string
       responses:
         '200':
-          description: ペットの情報が正常に更新されました
+          description: TODOの情報が正常に更新されました
         '404':
-          description: ペットが見つかりませんでした
+          description: TODOが見つかりませんでした
     delete:
-      summary: 指定されたIDのペットを削除
-      operationId: deletePet
+      summary: 指定されたIDのTODOを削除
+      operationId: deleteTodo
       parameters:
-        - name: petId
+        - name: todoId
           in: path
           required: true
-          description: 削除するペットのID
+          description: 削除するTODOのID
           schema:
             type: string
       responses:
         '204':
-          description: ペットが正常に削除されました
+          description: ""
         '404':
-          description: ペットが見つかりませんでした
+          description: TODOが見つかりませんでした
 components:
   schemas:
-    Pet:
+    Todo:
       type: object
       required:
         - id
-        - name
+        - subject
       properties:
         id:
           type: string
-        name:
+        subject:
           type: string
-        tag:
+        body:
           type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time

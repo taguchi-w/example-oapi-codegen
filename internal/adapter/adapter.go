@@ -8,12 +8,12 @@ import (
 )
 
 type Adapters struct {
-	Pet *Pet
+	Todo *Todo
 }
 
 func New(db DBAdapter, id IDGenerator) Adapters {
 	return Adapters{
-		Pet: NewPet(db, id),
+		Todo: NewTodo(db, id),
 	}
 }
 

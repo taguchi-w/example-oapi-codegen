@@ -15,12 +15,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	petId := "1" // ペットのID
+	todoId := "1" // TODOのID
 
 	// post
-	resp, err := client.PostPets(ctx, api.PostPetsJSONRequestBody{
-		Id:   petId,
-		Name: "cat",
+	resp, err := client.PostTodos(ctx, api.PostTodosJSONRequestBody{
+		Id:      todoId,
+		Subject: "subject a",
+		Body:    util.P("body"),
 	})
 	if err != nil {
 		panic(err)
@@ -29,11 +30,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Create Pet:", resp.Status)
+	fmt.Println("Create Todo:", resp.Status)
 	fmt.Println(string(body))
 
 	// get all
-	resp, err = client.GetPets(ctx)
+	resp, err = client.GetTodos(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -41,14 +42,15 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Get Pets:", resp.Status)
+	fmt.Println("Get Todos:", resp.Status)
 	fmt.Println(string(body))
 
 	// update
-	updateReqBody := api.UpdatePetPartialJSONRequestBody{
-		Name: util.P("new cat"),
+	updateReqBody := api.UpdateTodoPartialJSONRequestBody{
+		Subject: util.P("subject a (update)"),
+		Body:    util.P("body(update)"),
 	}
-	resp, err = client.UpdatePetPartial(ctx, petId, updateReqBody)
+	resp, err = client.UpdateTodoPartial(ctx, todoId, updateReqBody)
 	if err != nil {
 		panic(err)
 	}
@@ -56,11 +58,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Update Pet:", resp.Status)
+	fmt.Println("Update Todo:", resp.Status)
 	fmt.Println(string(body))
 
 	// delete
-	resp, err = client.DeletePet(ctx, petId)
+	resp, err = client.DeleteTodo(ctx, todoId)
 	if err != nil {
 		panic(err)
 	}
@@ -68,6 +70,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Delete Pet:", resp.Status)
+	fmt.Println("Delete Todo:", resp.Status)
 	fmt.Println(string(body))
 }

@@ -7,10 +7,10 @@ import (
 	"github.com/taguchi-w/example-oapi-codegen/pkg/api"
 )
 
-type PetAdapter interface {
-	Create(ctx context.Context, req CreatePetRequest) (*api.Pet, error)
-	Update(ctx context.Context, req UpdatePetRequest) (*api.Pet, error)
-	List(ctx context.Context, req GetPetsRequest) ([]*api.Pet, error)
-	Get(ctx context.Context, req GetPetRequest) (*api.Pet, error)
-	Delete(ctx context.Context, req DeletePetRequest) error
+type TodoAdapter interface {
+	Create(ctx context.Context, req CreateTodoRequest) (*api.Todo, error)
+	Update(ctx context.Context, req UpdateTodoRequest) (*api.Todo, error)
+	List(ctx context.Context, req GetTodosRequest) ([]*api.Todo, error)
+	Get(ctx context.Context, req GetTodoRequest) (*api.Todo, error)
+	Delete(ctx context.Context, req DeleteTodoRequest) error
 }

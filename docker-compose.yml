@@ -11,7 +11,7 @@ services:
       TZ: 'Asia/Tokyo'
     volumes:
       - ./assets/docker/mysql/config/my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
-      - ./assets/docker/mysql/sql:/docker-entrypoint-initdb.d
+      - ./assets/docker/mysql/ddl:/docker-entrypoint-initdb.d
     restart: always
 networks:
   default:

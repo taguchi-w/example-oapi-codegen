@@ -12,46 +12,46 @@ import (
 	api "github.com/taguchi-w/example-oapi-codegen/pkg/api"
 )
 
-// MockPetAdapter is a mock of PetAdapter interface.
-type MockPetAdapter struct {
+// MockTodoAdapter is a mock of TodoAdapter interface.
+type MockTodoAdapter struct {
 	ctrl     *gomock.Controller
-	recorder *MockPetAdapterMockRecorder
+	recorder *MockTodoAdapterMockRecorder
 }
 
-// MockPetAdapterMockRecorder is the mock recorder for MockPetAdapter.
-type MockPetAdapterMockRecorder struct {
-	mock *MockPetAdapter
+// MockTodoAdapterMockRecorder is the mock recorder for MockTodoAdapter.
+type MockTodoAdapterMockRecorder struct {
+	mock *MockTodoAdapter
 }
 
-// NewMockPetAdapter creates a new mock instance.
-func NewMockPetAdapter(ctrl *gomock.Controller) *MockPetAdapter {
-	mock := &MockPetAdapter{ctrl: ctrl}
-	mock.recorder = &MockPetAdapterMockRecorder{mock}
+// NewMockTodoAdapter creates a new mock instance.
+func NewMockTodoAdapter(ctrl *gomock.Controller) *MockTodoAdapter {
+	mock := &MockTodoAdapter{ctrl: ctrl}
+	mock.recorder = &MockTodoAdapterMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockPetAdapter) EXPECT() *MockPetAdapterMockRecorder {
+func (m *MockTodoAdapter) EXPECT() *MockTodoAdapterMockRecorder {
 	return m.recorder
 }
 
 // Create mocks base method.
-func (m *MockPetAdapter) Create(ctx context.Context, req CreatePetRequest) (*api.Pet, error) {
+func (m *MockTodoAdapter) Create(ctx context.Context, req CreateTodoRequest) (*api.Todo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", ctx, req)
-	ret0, _ := ret[0].(*api.Pet)
+	ret0, _ := ret[0].(*api.Todo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockPetAdapterMockRecorder) Create(ctx, req interface{}) *gomock.Call {
+func (mr *MockTodoAdapterMockRecorder) Create(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockPetAdapter)(nil).Create), ctx, req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockTodoAdapter)(nil).Create), ctx, req)
 }
 
 // Delete mocks base method.
-func (m *MockPetAdapter) Delete(ctx context.Context, req DeletePetRequest) error {
+func (m *MockTodoAdapter) Delete(ctx context.Context, req DeleteTodoRequest) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", ctx, req)
 	ret0, _ := ret[0].(error)
@@ -59,52 +59,52 @@ func (m *MockPetAdapter) Delete(ctx context.Context, req DeletePetRequest) error
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockPetAdapterMockRecorder) Delete(ctx, req interface{}) *gomock.Call {
+func (mr *MockTodoAdapterMockRecorder) Delete(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockPetAdapter)(nil).Delete), ctx, req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockTodoAdapter)(nil).Delete), ctx, req)
 }
 
 // Get mocks base method.
-func (m *MockPetAdapter) Get(ctx context.Context, req GetPetRequest) (*api.Pet, error) {
+func (m *MockTodoAdapter) Get(ctx context.Context, req GetTodoRequest) (*api.Todo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx, req)
-	ret0, _ := ret[0].(*api.Pet)
+	ret0, _ := ret[0].(*api.Todo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockPetAdapterMockRecorder) Get(ctx, req interface{}) *gomock.Call {
+func (mr *MockTodoAdapterMockRecorder) Get(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockPetAdapter)(nil).Get), ctx, req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockTodoAdapter)(nil).Get), ctx, req)
 }
 
 // List mocks base method.
-func (m *MockPetAdapter) List(ctx context.Context, req GetPetsRequest) ([]*api.Pet, error) {
+func (m *MockTodoAdapter) List(ctx context.Context, req GetTodosRequest) ([]*api.Todo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "List", ctx, req)
-	ret0, _ := ret[0].([]*api.Pet)
+	ret0, _ := ret[0].([]*api.Todo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // List indicates an expected call of List.
-func (mr *MockPetAdapterMockRecorder) List(ctx, req interface{}) *gomock.Call {
+func (mr *MockTodoAdapterMockRecorder) List(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockPetAdapter)(nil).List), ctx, req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockTodoAdapter)(nil).List), ctx, req)
 }
 
 // Update mocks base method.
-func (m *MockPetAdapter) Update(ctx context.Context, req UpdatePetRequest) (*api.Pet, error) {
+func (m *MockTodoAdapter) Update(ctx context.Context, req UpdateTodoRequest) (*api.Todo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", ctx, req)
-	ret0, _ := ret[0].(*api.Pet)
+	ret0, _ := ret[0].(*api.Todo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Update indicates an expected call of Update.
-func (mr *MockPetAdapterMockRecorder) Update(ctx, req interface{}) *gomock.Call {
+func (mr *MockTodoAdapterMockRecorder) Update(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockPetAdapter)(nil).Update), ctx, req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockTodoAdapter)(nil).Update), ctx, req)
 }

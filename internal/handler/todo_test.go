@@ -14,14 +14,14 @@ import (
 	"github.com/taguchi-w/example-oapi-codegen/pkg/util"
 )
 
-func TestPet_PostPets(t *testing.T) {
+func TestTodo_PostTodos(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	tests := []struct {
 		name       string
 		wantErr    bool
-		want       *api.Pet
+		want       *api.Todo
 		wantStatus int
 		mocks      map[string]interface{}
 	}{
@@ -29,17 +29,17 @@ func TestPet_PostPets(t *testing.T) {
 			name:    "",
 			wantErr: false,
 			mocks: map[string]interface{}{
-				"pet.Create.result": &api.Pet{
-					Id:   "1",
-					Name: "test",
-					Tag:  util.P("tag"),
+				"pet.Create.result": &api.Todo{
+					Id:      "1",
+					Subject: "subject a",
+					Body:    util.P("body"),
 				},
 				"pet.Create.err": nil,
 			},
-			want: &api.Pet{
-				Id:   "1",
-				Name: "test",
-				Tag:  util.P("tag"),
+			want: &api.Todo{
+				Id:      "1",
+				Subject: "subject a",
+				Body:    util.P("body"),
 			},
 			wantStatus: http.StatusCreated,
 		},
@@ -51,25 +51,25 @@ func TestPet_PostPets(t *testing.T) {
 			rec := httptest.NewRecorder()
 			ctx := e.NewContext(req, rec)
 
-			pet := NewMockPetService(ctrl)
+			pet := NewMockTodoService(ctrl)
 			pet.EXPECT().Create(gomock.Any(), gomock.Any()).Return(
-				tt.mocks["pet.Create.result"].(*api.Pet),
+				tt.mocks["pet.Create.result"].(*api.Todo),
 				tt.mocks["pet.Create.err"],
 			)
-			h := &Pet{Pet: pet}
-			if err := h.PostPets(ctx); (err != nil) != tt.wantErr {
-				t.Errorf("Pet.PostPets() error = %v, wantErr %v", err, tt.wantErr)
+			h := &Todo{Todo: pet}
+			if err := h.PostTodos(ctx); (err != nil) != tt.wantErr {
+				t.Errorf("Todo.PostTodos() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			assert.Equal(t, rec.Result().StatusCode, tt.wantStatus)
 
 			if !tt.wantErr {
-				var got api.Pet
+				var got api.Todo
 				if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil {
 					t.Errorf("Failed to unmarshal response: %v", err)
 				}
 				if diff := cmp.Diff(&got, tt.want); diff != "" {
-					t.Errorf("Pet.PostPets(got , want) \n%s", diff)
+					t.Errorf("Todo.PostTodos(got , want) \n%s", diff)
 				}
 			}
 		})

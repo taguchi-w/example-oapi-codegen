@@ -11,19 +11,19 @@ import (
 	"github.com/taguchi-w/example-oapi-codegen/pkg/util"
 )
 
-func TestPet_Create(t *testing.T) {
+func TestTodo_Create(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	type args struct {
 		ctx context.Context
-		req service.CreatePetRequest
+		req service.CreateTodoRequest
 	}
 	tests := []struct {
 		name    string
-		a       *Pet
+		a       *Todo
 		args    args
-		want    *api.Pet
+		want    *api.Todo
 		wantErr bool
 		mocks   map[string]interface{}
 	}{
@@ -31,17 +31,17 @@ func TestPet_Create(t *testing.T) {
 			name: "登録できること",
 			args: args{
 				ctx: context.TODO(),
-				req: service.CreatePetRequest{
-					Pet: api.Pet{
-						Name: "test",
-						Tag:  util.P("tag"),
+				req: service.CreateTodoRequest{
+					Todo: api.Todo{
+						Subject: "subject a",
+						Body:    util.P("body"),
 					},
 				},
 			},
-			want: &api.Pet{
-				Id:   "1",
-				Name: "test",
-				Tag:  util.P("tag"),
+			want: &api.Todo{
+				Id:      "1",
+				Subject: "subject a",
+				Body:    util.P("body"),
 			},
 			wantErr: false,
 			mocks: map[string]interface{}{
@@ -61,14 +61,14 @@ func TestPet_Create(t *testing.T) {
 			)
 			id.EXPECT().Generate().Return(tt.mocks["id.Generate.id"])
 
-			a := &Pet{db, id}
+			a := &Todo{db, id}
 			got, err := a.Create(tt.args.ctx, tt.args.req)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Pet.Create() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Todo.Create() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if diff := cmp.Diff(got, tt.want); diff != "" {
-				t.Errorf("Pet.Create(got , want) \n%s", diff)
+				t.Errorf("Todo.Create(got , want) \n%s", diff)
 			}
 		})
 	}
