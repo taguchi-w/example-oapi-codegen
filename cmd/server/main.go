@@ -2,7 +2,9 @@ package main
 
 import (
 	"log" // 生成されたAPIコードのインポートパスを適切に設定
+	"os"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 	"github.com/taguchi-w/example-oapi-codegen/internal/adapter"
 	"github.com/taguchi-w/example-oapi-codegen/internal/handler"
@@ -15,7 +17,7 @@ func main() {
 	e := echo.New()
 
 	// 生成されたAPIハンドラーの登録
-	db := interface{}(nil) // 本来はDBのインスタンスを渡す
+	db := sqlx.MustOpen("mysql", os.Getenv("MYSQL_DSN"))
 
 	adapters := NewAdapters(db)
 	// services := service.New(adapters)

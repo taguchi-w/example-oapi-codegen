@@ -24,11 +24,11 @@ import (
 
 // Todo defines model for Todo.
 type Todo struct {
-	Body      *string    `json:"body,omitempty"`
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
-	Id        string     `json:"id"`
-	Subject   string     `json:"subject"`
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	Body      string    `json:"body"`
+	CreatedAt time.Time `json:"createdAt"`
+	Id        string    `json:"id"`
+	Subject   string    `json:"subject"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 // UpdateTodoPartialJSONBody defines parameters for UpdateTodoPartial.
@@ -733,17 +733,18 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7yUz08UMRTH/xXy9Diyi3KaG2YTsydIxBPhUGYeULIzLW3XZEPm0FlUXDbRYIQAB0gk",
-	"ajBuNPGAB/GPaWaF/8K0s/zaGQKa6GXatH3z3vfzfe0KBCziLMZYSfBXQAaLGBE3nWYhsyMXjKNQFN3q",
-	"HAtbdlQtjuCDVILGC5B4EAgkCsMJZXfnmYiIAh9CovCeohGCVwyhYemfZHNuCQNVutfk4Z9lSTwQuNyk",
-	"AkPwZ2zKiwSz56dZvpDY4zSed7oVVQ2795hGvIEjFsfIxFQdPHiKQlIWgw9jo9XRqq2LcYwJp+DDA7fk",
-	"ASdq0RGrKBYyN1tAV7bFSRRlcT0EHx6hmnYHbKGSs1jmoO9Xq3YIWKwwdnGE8wYNXGRlSdr8Z37ZGVUY",
-	"ucC7AufBhzuVC2crA1srztPkXDYRgrRy1SHKQFCucl39tddZZ8/Rk80oIqIFPkxP1iaN7pn2oUm/m/aa",
-	"STeyV5vZ8Zb9I2eyRNwUk5fULTdRqoeDBrq1sJv1XDVZiSYmBZhjdrgq0ulJN05+/sg6+0ZvGX3svsO6",
-	"+5tf3PrqlQB3KPe2smKHepjkORqosIii5tZdwbY5BIlQoZDgzwzXlb3snG4fGL1t0vUB83oNbGOC79oK",
-	"PIhJZA3M88KwfO8SvuH7MFtAM15EYx0dL9vI6+mevF83+sDodZN2HLZdk74x+kM5v+6LrLdj9FuTdo3e",
-	"q9eM7g1Q5lJd/xAVLBapPXH33VKbIkJR0rgJXn/3m/PrH8L7uza+5TN6/eOXlL5WN/V99ToPe/32s2z/",
-	"q9Hd/ud32dGR0Z/O2OVGnV+G/9EKunfa/pitPf+1s2r04aC0dCOvyCpNfgcAAP//HzIEjKoGAAA=",
+	"H4sIAAAAAAAC/7yUQU8UMRTHvwp5ehzZRTnNDbOJ2RMk4olwKDMPKNmZlrZrsiFz6CwqLptoMEKAAyQS",
+	"NRg3mnjAg/hhmlnhW5h2Flh2hyya6GU6afv63v/3f+0aBCziLMZYSfDXQAbLGBH3O8tCZkcuGEehKLrZ",
+	"BRY27KgaHMEHqQSNlyDxIBBIFIZTyq4uMhERBT6EROE9RSMEbziEhoUnyfrCCgaqcK3Owz/LknggcLVO",
+	"BYbgz9mUVwm8XE1/7f0Z5i8PY/n+xJ5G40WHRVFVs2uPacRrOGZpjU3NVMGDpygkZTH4MDFeHi/bshnH",
+	"mHAKPjxwUx5wopYd0JJiIXN/S+hUWdpEURZXQ/DhEapZt8HqkJzFMvfhfrlsh4DFCmMXRziv0cBFllak",
+	"zX9hp/2jCiMXeFfgIvhwp3RlfKnneslZnlzKJkKQRq46RBkIylWuq7vxOmsdOLiyHkVENMCH2enKtNEd",
+	"0zw26XfT3DDpVvZqOzvdsSdyJgvEzTDZp261jlI97PXXrYWN1nO9B5SoYzIEc8IO10U6PenW2c8fWevQ",
+	"6B2jT913UHd3+4ubX78W4Dbl3pbW7FANkzxHDRUOo6i4eVewbQ5BIlQoJPhzg3VlL1vnu0dG75p0s8e8",
+	"WgHbmOC7tgIPYhJZA/O8MCjf68M3eF3mh9BMDqOxjk4WLeT1tM/ebxp9ZPSmSVsO275J3xj9oZhf+0XW",
+	"2TP6rUnbRh9UK0Z3eihzqa5/iAqWh6k9cZfVUpshQlFSGwWvu//N+fUP4f1dG9/ylb35bUwKX6tRfV++",
+	"ycNOt/ksO/xqdLv7+V12cmL0pwt2uVGXl+F/tILunDc/ZhvPf+2tG33cKy3dyiuySpPfAQAA//814hDU",
+	"yQYAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

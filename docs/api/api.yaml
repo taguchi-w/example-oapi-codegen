@@ -75,6 +75,9 @@ components:
       required:
         - id
         - subject
+        - body        
+        - createdAt
+        - updatedAt
       properties:
         id:
           type: string

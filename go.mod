@@ -4,6 +4,7 @@ go 1.21.5
 
 require (
 	github.com/getkin/kin-openapi v0.118.0
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/golang/mock v1.6.0
 	github.com/google/go-cmp v0.6.0
 	github.com/jmoiron/sqlx v1.3.5

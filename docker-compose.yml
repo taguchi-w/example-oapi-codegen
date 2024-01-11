@@ -13,6 +13,14 @@ services:
       - ./assets/docker/mysql/config/my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
       - ./assets/docker/mysql/ddl:/docker-entrypoint-initdb.d
     restart: always
+  test:
+    build:
+      context: .
+      dockerfile: ./assets/docker/test/Dockerfile
+    environment:
+      TZ: 'Asia/Tokyo'
+    depends_on:
+      - mysql
 networks:
   default:
     ipam:

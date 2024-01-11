@@ -7,7 +7,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/google/go-cmp/cmp"
 	"github.com/taguchi-w/example-oapi-codegen/pkg/api"
-	"github.com/taguchi-w/example-oapi-codegen/pkg/util"
 )
 
 func TestTodo_Create(t *testing.T) {
@@ -32,21 +31,21 @@ func TestTodo_Create(t *testing.T) {
 				req: CreateTodoRequest{
 					Todo: api.Todo{
 						Subject: "subject a",
-						Body:    util.P("body"),
+						Body:    "body",
 					},
 				},
 			},
 			want: &api.Todo{
 				Id:      "1",
 				Subject: "subject a",
-				Body:    util.P("body"),
+				Body:    "body",
 			},
 			wantErr: false,
 			mocks: map[string]interface{}{
 				"todoAdapter.Create.pet": &api.Todo{
 					Id:      "1",
 					Subject: "subject a",
-					Body:    util.P("body"),
+					Body:    "body",
 				},
 				"todoAdapter.Create.err": nil,
 			},

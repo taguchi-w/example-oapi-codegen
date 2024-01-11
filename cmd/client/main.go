@@ -21,7 +21,7 @@ func main() {
 	resp, err := client.PostTodos(ctx, api.PostTodosJSONRequestBody{
 		Id:      todoId,
 		Subject: "subject a",
-		Body:    util.P("body"),
+		Body:    "body",
 	})
 	if err != nil {
 		panic(err)

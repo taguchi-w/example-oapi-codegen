@@ -35,7 +35,7 @@ func (h *Todo) PostTodos(ctx echo.Context) error {
 		Todo: api.Todo{
 			Id:      "1",
 			Subject: "subject a",
-			Body:    util.P("body"),
+			Body:    "body",
 		},
 	})
 	if err != nil {

@@ -11,7 +11,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/taguchi-w/example-oapi-codegen/pkg/api"
-	"github.com/taguchi-w/example-oapi-codegen/pkg/util"
 )
 
 func TestTodo_PostTodos(t *testing.T) {
@@ -32,14 +31,14 @@ func TestTodo_PostTodos(t *testing.T) {
 				"pet.Create.result": &api.Todo{
 					Id:      "1",
 					Subject: "subject a",
-					Body:    util.P("body"),
+					Body:    "body",
 				},
 				"pet.Create.err": nil,
 			},
 			want: &api.Todo{
 				Id:      "1",
 				Subject: "subject a",
-				Body:    util.P("body"),
+				Body:    "body",
 			},
 			wantStatus: http.StatusCreated,
 		},

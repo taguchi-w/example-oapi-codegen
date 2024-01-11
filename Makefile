@@ -39,9 +39,12 @@ lint:
 test:
 	go test ./...	
 
+integration-test:
+	docker-compose -f docker-compose.yml run --build --rm -e MYSQL_DSN="root@tcp(mysql:3306)/oapicodegen?parseTime=true" test
+
 .PHONY: build
 build:
-	go build -o $(BINARY_NAME) cmd/server/main.g
+	go build -o $(BINARY_NAME) cmd/server/main.go
 
 .PHONY: clean
 clean:
