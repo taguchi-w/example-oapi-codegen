@@ -7,7 +7,10 @@ oapi-codegenの使用感を確認するためのリポジトリです。
 # usage
 
 - test database start
-    `docker compose -d`
+    `docker compose -d mysql`
 
-- go build 
+- integration test
+    `make integration-test`
+
+- build 
     `make all`

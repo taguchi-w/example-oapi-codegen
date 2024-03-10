@@ -17,6 +17,16 @@ GENERATED_PACKAGE=api
 SERVER_ENTRY_POINT=cmd/server/main.go
 CLIENT_ENTRY_POINT=cmd/client/main.go
 
+# 依存関係のインストール
+.PHONY: deps
+deps:
+	go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
+	go install github.com/golang/mock/mockgen@latest
+	go install honnef.co/go/tools/cmd/staticcheck@latest
+ifneq ($(shell command -v asdf 2> /dev/null),)
+	asdf reshim
+endif
+
 # コード生成
 .PHONY: generate-api
 generate-api:
@@ -84,5 +94,5 @@ sql-dump:
 	mysqldump -u root --protocol=tcp --no-create-info $(SQL_MIGRATE_DB) gorp_migrations >> $(SQL_DUMP_DIR)/004_init_tabels.sql
 
 # すべてのタスクを実行
-.PHONY: all
-all: generate lint test build
+.DEFAULT_GOAL := default
+default: deps generate lint test build
