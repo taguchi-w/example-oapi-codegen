@@ -1,6 +1,6 @@
 module github.com/taguchi-w/example-oapi-codegen
 
-go 1.22.1
+go 1.23.1
 
 require (
 	github.com/getkin/kin-openapi v0.127.0

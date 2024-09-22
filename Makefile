@@ -20,7 +20,7 @@ CLIENT_ENTRY_POINT=cmd/client/main.go
 # 依存関係のインストール
 .PHONY: deps
 deps:
-	go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
+	go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
 	go install github.com/golang/mock/mockgen@latest
 	go install honnef.co/go/tools/cmd/staticcheck@latest
 ifneq ($(shell command -v asdf 2> /dev/null),)
@@ -50,7 +50,7 @@ test:
 	go test ./...	
 
 integration-test:
-	docker-compose -f docker-compose.yml run --build --rm -e MYSQL_DSN="root@tcp(mysql:3306)/oapicodegen?parseTime=true" test
+	docker compose -f docker-compose.yml run --build --rm -e MYSQL_DSN="root@tcp(mysql:3306)/oapicodegen?parseTime=true" test
 
 .PHONY: build
 build:
