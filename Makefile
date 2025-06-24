@@ -13,9 +13,11 @@ SPEC_FILE=docs/api/api.yaml
 # 生成されるGoコードのパッケージと出力先
 GENERATED_DIR=pkg/api
 GENERATED_PACKAGE=api
+
 # エントリーポイント
 SERVER_ENTRY_POINT=cmd/server/main.go
 CLIENT_ENTRY_POINT=cmd/client/main.go
+
 
 # 依存関係のインストール
 .PHONY: deps
