@@ -31,24 +31,34 @@ func (h *Todo) GetTodos(ctx echo.Context) error {
 }
 
 func (h *Todo) PostTodos(ctx echo.Context) error {
+	var req api.Todo
+	if err := ctx.Bind(&req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	pet, err := h.Todo.Create(ctx.Request().Context(), service.CreateTodoRequest{
 		Todo: api.Todo{
-			Id:      "1",
-			Subject: "subject a",
-			Body:    "body",
+			Subject: req.Subject,
+			Body:    req.Body,
 		},
 	})
 	if err != nil {
+
 		return err
 	}
 	return ctx.JSON(http.StatusCreated, pet)
 }
 
 func (h *Todo) UpdateTodoPartial(ctx echo.Context, todoId string) error {
+	var req api.Todo
+	if err := ctx.Bind(&req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	pet, err := h.Todo.Update(ctx.Request().Context(), service.UpdateTodoRequest{
 		Id:      todoId,
-		Subject: util.P("subject a"),
-		Body:    util.P("body"),
+		Subject: util.PorNil(req.Subject, ""),
+		Body:    util.PorNil(req.Body, ""),
 	})
 	if err != nil {
 		return err

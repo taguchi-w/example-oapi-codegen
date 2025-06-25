@@ -15,12 +15,23 @@ import (
 func main() {
 	// Echoインスタンスの初期化
 	e := echo.New()
+	e.Debug = true
+
+	// DB接続
+	dsn := os.Getenv("MYSQL_DSN")
+	if len(dsn) == 0 {
+		log.Fatalf("MYSQL_DSN environment variable is not set")
+	}
+	db, err := sqlx.Open("mysql", os.Getenv("MYSQL_DSN"))
+	if err != nil {
+		log.Fatalf("failed to open DB: %v", err)
+	}
+	if err := db.Ping(); err != nil {
+		log.Fatalf("failed to connect to DB: %v", err)
+	}
 
 	// 生成されたAPIハンドラーの登録
-	db := sqlx.MustOpen("mysql", os.Getenv("MYSQL_DSN"))
-
 	adapters := NewAdapters(db)
-	// services := service.New(adapters)
 	services := NewServices(adapters)
 	handlers := NewHandlers(services)
 	api.RegisterHandlers(e, handlers)
@@ -51,9 +62,9 @@ func NewServices(adapters Adapters) Services {
 		Todo: service.NewTodo(adapters.Todo),
 	}
 }
-func NewAdapters(db interface{}) Adapters {
+func NewAdapters(db adapter.DBAdapter) Adapters {
 	return Adapters{
-		Todo: adapter.NewTodo(nil, nil),
+		Todo: adapter.NewTodo(db, adapter.NewXIDGenerator()),
 	}
 }
 

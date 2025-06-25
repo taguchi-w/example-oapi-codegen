@@ -85,6 +85,7 @@ func (a *Todo) Update(ctx context.Context, req service.UpdateTodoRequest) (*api.
 		values["body"] = *req.Body
 		sets = append(sets, "body = :body")
 	}
+
 	res, err := a.db.NamedExec(
 		fmt.Sprintf(`UPDATE todo SET %s WHERE id = :id LIMIT 1`, strings.Join(sets, ",")),
 		values,
@@ -97,6 +98,7 @@ func (a *Todo) Update(ctx context.Context, req service.UpdateTodoRequest) (*api.
 		return nil, err
 	}
 	if affected == 0 {
+		fmt.Println("Error updating todo:", values)
 		return nil, service.ErrNotFound
 	}
 	todo, err := a.Get(ctx, service.GetTodoRequest{Id: req.Id})
@@ -113,18 +115,21 @@ func (a *Todo) List(ctx context.Context, req service.GetTodosRequest) ([]*api.To
 		"offset": req.Offset,
 		"limit":  req.Limit,
 	}
-	var rows []*TodoValue
-	err := a.db.Select(
-		rows,
+	// var rows []*TodoValue
+	rows, err := a.db.NamedQuery(
 		fmt.Sprintf("SELECT %s FROM todo LIMIT :offset,:limit", strings.Join(TodoColumns, ",")),
 		values,
 	)
 	if err != nil {
 		return nil, err
 	}
-	todos := make([]*api.Todo, 0, len(rows))
-	for i := range rows {
-		todos = append(todos, rows[i].ToModel())
+	var todos []*api.Todo
+	for rows.Next() {
+		var v TodoValue
+		if err := rows.StructScan(&v); err != nil {
+			return nil, err
+		}
+		todos = append(todos, v.ToModel())
 	}
 	return todos, nil
 }
@@ -146,5 +151,17 @@ func (a *Todo) Get(ctx context.Context, req service.GetTodoRequest) (*api.Todo, 
 	return row.ToModel(), nil
 }
 func (a *Todo) Delete(ctx context.Context, req service.DeleteTodoRequest) error {
+	if err := req.Validate(); err != nil {
+		return err
+	}
+	_, err := a.db.NamedExec(
+		"DELETE FROM todo WHERE id = :id LIMIT 1",
+		map[string]interface{}{
+			"id": req.Id,
+		},
+	)
+	if err != nil {
+		return err
+	}
 	return nil
 }

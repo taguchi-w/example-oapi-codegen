@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -15,13 +16,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	todoId := "1" // TODOのID
-
 	// post
 	resp, err := client.PostTodos(ctx, api.PostTodosJSONRequestBody{
-		Id:      todoId,
-		Subject: "subject a",
-		Body:    "body",
+		Subject: "subject a from request",
+		Body:    "body from request",
 	})
 	if err != nil {
 		panic(err)
@@ -45,10 +43,16 @@ func main() {
 	fmt.Println("Get Todos:", resp.Status)
 	fmt.Println(string(body))
 
+	var todos []api.Todo
+	if err := json.Unmarshal(body, &todos); err != nil {
+		panic(err)
+	}
+	todoId := todos[0].Id
+
 	// update
 	updateReqBody := api.UpdateTodoPartialJSONRequestBody{
-		Subject: util.P("subject a (update)"),
-		Body:    util.P("body(update)"),
+		Subject: util.P("subject a update from request"),
+		Body:    util.P("body update from request"),
 	}
 	resp, err = client.UpdateTodoPartial(ctx, todoId, updateReqBody)
 	if err != nil {
